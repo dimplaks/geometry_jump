@@ -57,6 +57,7 @@ let tool = "block";
 let camX = 0;
 let camY = 0; // extra vertical pan in blocks (0 = default ground framing)
 let blockPx = 40;
+let autoBlockPx = true;
 let dpr = 1;
 let viewW = 0;
 let viewH = 0;
@@ -82,6 +83,8 @@ pushHistory();
 resize();
 requestAnimationFrame(loop);
 window.addEventListener("resize", resize);
+window.addEventListener("orientationchange", () => setTimeout(resize, 80));
+visualViewport?.addEventListener("resize", resize);
 
 bootEditor();
 
@@ -186,6 +189,7 @@ function bindUi() {
     (e) => {
       e.preventDefault();
       if (e.ctrlKey) {
+        autoBlockPx = false;
         const next = clamp(blockPx - Math.sign(e.deltaY) * 2, 22, 72);
         const before = screenToWorld(e.offsetX, e.offsetY);
         blockPx = next;
@@ -631,11 +635,16 @@ function rectFrom(a, b) {
 function resize() {
   dpr = Math.min(window.devicePixelRatio || 1, 2);
   const rect = canvas.getBoundingClientRect();
-  viewW = rect.width;
-  viewH = rect.height;
+  viewW = Math.max(1, rect.width);
+  viewH = Math.max(1, rect.height);
   canvas.width = Math.floor(viewW * dpr);
   canvas.height = Math.floor(viewH * dpr);
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (autoBlockPx) {
+    const byH = viewH / 12;
+    const byW = viewW / 18;
+    blockPx = Math.max(22, Math.min(48, Math.min(byH, byW)));
+  }
 }
 
 function groundScreenY() {

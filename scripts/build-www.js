@@ -8,7 +8,11 @@ const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
 const WWW = path.join(ROOT, "www");
-const API_BASE = (process.env.GJ_API_BASE || process.env.API_BASE || "").replace(/\/+$/, "");
+const API_BASE = (
+  process.env.GJ_API_BASE ||
+  process.env.API_BASE ||
+  "https://geometry-jump.onrender.com"
+).replace(/\/+$/, "");
 
 const FILES = ["index.html", "editor.html", "styles.css", "editor.css"];
 const DIRS = ["js"];

@@ -40,15 +40,14 @@ npm start
 Требуются Node, **JDK 17** (Capacitor 6), Android SDK (Android Studio).
 
 ```bash
-# URL API для APK (Render). Без переменной — пустой API_BASE (только офлайн / same-origin).
-export GJ_API_BASE="https://your-service.onrender.com"
 export JAVA_HOME="$(/usr/libexec/java_home -v 17 2>/dev/null || echo /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home)"
 
 npm install
-npm run build:www
 npx cap add android   # только первый раз, если нет папки android/
-npm run apk:debug
+npm run apk:debug     # API: https://geometry-jump.onrender.com
 ```
+
+Переопределить API: `GJ_API_BASE=https://... npm run build:www` затем `npx cap sync android && npm run apk:debug`.
 
 APK: `android/app/build/outputs/apk/debug/app-debug.apk`
 

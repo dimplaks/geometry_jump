@@ -57,6 +57,8 @@ export class Game {
 
     this._onResize = () => this.resize();
     window.addEventListener("resize", this._onResize);
+    window.addEventListener("orientationchange", this._onResize);
+    visualViewport?.addEventListener("resize", this._onResize);
     this.resize();
   }
 
@@ -98,8 +100,10 @@ export class Game {
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     this.viewW = w;
     this.viewH = h;
-    // Keep ~10 blocks visible vertically around playfield
-    this.blockPx = Math.max(36, Math.min(56, h / 12));
+    // Landscape-first: fit ~11 blocks vertically and ~16 horizontally
+    const byH = h / 11;
+    const byW = w / 16;
+    this.blockPx = Math.max(26, Math.min(72, Math.min(byH, byW)));
   }
 
   startLevel(level, { attempt = 1, practice = false } = {}) {
@@ -786,6 +790,8 @@ export class Game {
   destroy() {
     this.stop();
     window.removeEventListener("resize", this._onResize);
+    window.removeEventListener("orientationchange", this._onResize);
+    visualViewport?.removeEventListener("resize", this._onResize);
   }
 }
 

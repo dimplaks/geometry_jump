@@ -18,6 +18,7 @@ const CORS_ORIGINS = new Set(
     .filter(Boolean)
     .concat([
       "http://localhost",
+      "https://localhost",
       "http://localhost:5173",
       "http://127.0.0.1",
       "http://127.0.0.1:5173",
@@ -69,7 +70,14 @@ function corsHeaders(req) {
   if (CORS_ORIGINS.has(origin) || process.env.CORS_ALLOW_ALL === "1") {
     headers["Access-Control-Allow-Origin"] = origin;
     headers.Vary = "Origin";
-  } else if (origin.startsWith("http://localhost") || origin.startsWith("http://127.0.0.1") || origin.startsWith("capacitor://") || origin.startsWith("ionic://")) {
+  } else if (
+    origin.startsWith("http://localhost") ||
+    origin.startsWith("https://localhost") ||
+    origin.startsWith("http://127.0.0.1") ||
+    origin.startsWith("https://127.0.0.1") ||
+    origin.startsWith("capacitor://") ||
+    origin.startsWith("ionic://")
+  ) {
     headers["Access-Control-Allow-Origin"] = origin;
     headers.Vary = "Origin";
   }

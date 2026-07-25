@@ -4,23 +4,32 @@ body {
 
 #editor-app {
   display: grid;
-  grid-template-columns: 200px 1fr 220px;
-  grid-template-rows: 64px 1fr 36px;
+  grid-template-columns: minmax(140px, 200px) minmax(0, 1fr) minmax(160px, 220px);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "top top top"
+    "tools stage side"
+    "hint hint hint";
   width: 100%;
   height: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
   background: #0a1610;
   color: var(--text);
+  overflow: hidden;
 }
 
 .ed-top {
-  grid-column: 1 / -1;
+  grid-area: top;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 14px;
+  gap: 10px;
+  padding: 8px 12px;
   background: rgba(12, 28, 18, 0.95);
   border-bottom: 1px solid var(--panel-border);
   z-index: 2;
+  min-height: 0;
+  flex-wrap: wrap;
 }
 
 .ed-back {
@@ -33,14 +42,14 @@ body {
 
 .ed-name {
   flex: 1;
-  min-width: 0;
+  min-width: 120px;
   background: rgba(0, 0, 0, 0.35);
   border: 2px solid var(--panel-border);
   border-radius: 12px;
   color: var(--text);
   font-family: var(--font-display);
-  font-size: 1rem;
-  padding: 10px 14px;
+  font-size: clamp(0.85rem, 1.5vw, 1rem);
+  padding: 8px 12px;
   outline: none;
 }
 
@@ -51,7 +60,7 @@ body {
 .ed-top-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   justify-content: flex-end;
 }
 
@@ -78,24 +87,32 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 12px;
+  padding: 10px;
   overflow: auto;
+  overscroll-behavior: contain;
   background: rgba(8, 20, 14, 0.96);
+  min-height: 0;
+  min-width: 0;
+}
+
+.ed-tools {
+  grid-area: tools;
   border-right: 1px solid var(--panel-border);
 }
 
 .ed-side {
-  border-right: none;
+  grid-area: side;
   border-left: 1px solid var(--panel-border);
 }
 
 .ed-section {
-  margin-top: 8px;
+  margin-top: 6px;
   font-family: var(--font-display);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   letter-spacing: 0.08em;
   color: var(--sun);
   text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 .ed-account {
@@ -111,11 +128,12 @@ body {
   color: var(--text);
   font-family: var(--font-body);
   font-weight: 800;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-align: left;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-radius: 12px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .tool:hover {
@@ -131,8 +149,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--muted);
+  flex-shrink: 0;
 }
 
 .ed-field input[type="number"],
@@ -143,12 +162,12 @@ body {
   color: var(--text);
   font-family: var(--font-body);
   font-weight: 700;
-  padding: 8px 10px;
+  padding: 7px 10px;
 }
 
 .ed-field input[type="color"] {
   width: 100%;
-  height: 34px;
+  height: 32px;
   border: 1px solid var(--panel-border);
   border-radius: 10px;
   background: transparent;
@@ -160,14 +179,17 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--muted);
+  flex-shrink: 0;
 }
 
 .ed-stage {
+  grid-area: stage;
   position: relative;
   min-width: 0;
   min-height: 0;
+  overflow: hidden;
   background: #102018;
 }
 
@@ -176,6 +198,7 @@ body {
   width: 100%;
   height: 100%;
   cursor: crosshair;
+  touch-action: none;
 }
 
 #editor-canvas.panning {
@@ -188,22 +211,24 @@ body {
 
 #ed-coords {
   position: absolute;
-  left: 10px;
-  bottom: 10px;
-  padding: 6px 10px;
+  left: 8px;
+  bottom: 8px;
+  padding: 5px 9px;
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.45);
   font-family: var(--font-display);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   pointer-events: none;
+  z-index: 1;
 }
 
 .saved-list {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  max-height: 220px;
+  max-height: 180px;
   overflow: auto;
+  min-height: 0;
 }
 
 .saved-item {
@@ -253,17 +278,18 @@ body {
 }
 
 .ed-hint {
-  grid-column: 1 / -1;
+  grid-area: hint;
   display: flex;
   align-items: center;
-  padding: 0 14px;
-  font-size: 0.75rem;
+  padding: 6px 12px;
+  font-size: 0.72rem;
   color: var(--muted);
   background: rgba(8, 20, 14, 0.96);
   border-top: 1px solid var(--panel-border);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-height: 0;
 }
 
 #playtest {
@@ -282,16 +308,17 @@ body {
   height: 100%;
   display: block;
   cursor: pointer;
+  touch-action: none;
 }
 
 #play-hud {
   position: absolute;
-  top: 12px;
-  left: 12px;
-  right: 12px;
+  top: max(8px, env(safe-area-inset-top));
+  left: max(8px, env(safe-area-inset-left));
+  right: max(8px, env(safe-area-inset-right));
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   pointer-events: none;
   z-index: 2;
 }
@@ -303,36 +330,132 @@ body {
 
 #play-attempt {
   font-family: var(--font-display);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-shadow: 0 2px 8px #000;
 }
 
 #play-hud .progress-track {
-  width: min(240px, 30vw);
+  width: min(220px, 28vw);
 }
 
+/* Tablet / small desktop: side panel under stage, stage keeps remaining height */
 @media (max-width: 960px) {
   #editor-app {
-    grid-template-columns: 160px 1fr;
-    grid-template-rows: 64px 1fr auto 36px;
+    grid-template-columns: minmax(120px, 160px) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) minmax(0, 28vh) auto;
+    grid-template-areas:
+      "top top"
+      "tools stage"
+      "side side"
+      "hint hint";
   }
 
   .ed-side {
-    grid-column: 1 / -1;
-    max-height: 180px;
     border-left: none;
     border-top: 1px solid var(--panel-border);
     flex-direction: row;
     flex-wrap: wrap;
     align-content: flex-start;
+    gap: 8px 12px;
+    max-height: 28vh;
   }
 
   .ed-side .ed-section {
     width: 100%;
+    margin-top: 0;
+  }
+
+  .ed-side .ed-field {
+    min-width: 110px;
+    flex: 1 1 110px;
   }
 
   .saved-list {
     width: 100%;
-    max-height: 90px;
+    max-height: 72px;
+  }
+}
+
+/* Phones (esp. landscape): tools as bottom toolbar, no overlap of canvas */
+@media (max-width: 720px), (max-height: 520px) {
+  #editor-app {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto minmax(0, 26vh) auto;
+    grid-template-areas:
+      "top"
+      "stage"
+      "tools"
+      "side"
+      "hint";
+  }
+
+  .ed-tools {
+    border-right: none;
+    border-top: 1px solid var(--panel-border);
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-height: none;
+  }
+
+  .ed-tools .ed-section,
+  .ed-tools .ed-field,
+  .ed-tools .ed-check,
+  .ed-tools #btn-clear {
+    display: none;
+  }
+
+  .ed-tools .tool {
+    flex: 0 0 auto;
+    padding: 8px 10px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  .ed-side {
+    max-height: 26vh;
+    border-top: 1px solid var(--panel-border);
+  }
+
+  .ed-top {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+
+  .ed-top-actions .btn.small {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+  }
+
+  .ed-hint {
+    font-size: 0.65rem;
+    padding: 4px 8px;
+  }
+
+  #ed-coords {
+    font-size: 0.62rem;
+    padding: 4px 7px;
+  }
+}
+
+@media (max-height: 420px) {
+  #editor-app {
+    grid-template-rows: auto minmax(0, 1fr) auto minmax(0, 22vh) 0;
+  }
+
+  .ed-hint {
+    display: none;
+  }
+
+  .ed-side {
+    max-height: 22vh;
+  }
+
+  .ed-name {
+    max-width: 160px;
   }
 }

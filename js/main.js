@@ -570,7 +570,17 @@ function goMenu() {
 async function bootSession() {
   els.authStatus.textContent = "Проверка сервера…";
   els.authStatus.className = "auth-status";
-  const online = await checkServerHealth();
+  const online = await checkServerHealth(undefined, {
+    onAttempt: (n, max) => {
+      if (max <= 1) {
+        els.authStatus.textContent = "Проверка сервера…";
+      } else if (n === 1) {
+        els.authStatus.textContent = "Подключение к серверу…";
+      } else {
+        els.authStatus.textContent = `Сервер просыпается… (${n}/${max})`;
+      }
+    },
+  });
   updateAuthUiForConnectivity(online);
 
   if (online) {
@@ -606,13 +616,48 @@ function updateAuthUiForConnectivity(online) {
     els.authHint.textContent = "Создай аккаунт или войди, чтобы сохранять прогресс в облаке";
     els.authTabs.classList.remove("hidden");
     els.authForm.classList.remove("hidden");
+    els.btnOffline.textContent = "Играть офлайн";
   } else {
     els.authStatus.textContent = "Сервер недоступен — можно играть офлайн";
     els.authStatus.className = "auth-status offline";
-    els.authHint.textContent = "Прогресс сохранится только на этом устройстве";
+    els.authHint.textContent = "Free-сервер может «спать» до минуты. Нажми «Повторить» или играй офлайн";
     els.authTabs.classList.add("hidden");
     els.authForm.classList.add("hidden");
+    els.btnOffline.textContent = "Играть офлайн";
   }
+  ensureRetryButton(online);
+}
+
+function ensureRetryButton(online) {
+  let retry = document.getElementById("btn-retry-server");
+  if (online) {
+    retry?.remove();
+    return;
+  }
+  if (retry) return;
+  retry = document.createElement("button");
+  retry.id = "btn-retry-server";
+  retry.type = "button";
+  retry.className = "btn primary";
+  retry.textContent = "Повторить подключение";
+  retry.addEventListener("click", async () => {
+    retry.disabled = true;
+    retry.textContent = "Подключение…";
+    const ok = await checkServerHealth(undefined, {
+      onAttempt: (n, max) => {
+        els.authStatus.textContent = max > 1 ? `Сервер просыпается… (${n}/${max})` : "Проверка сервера…";
+        els.authStatus.className = "auth-status";
+      },
+    });
+    retry.disabled = false;
+    retry.textContent = "Повторить подключение";
+    updateAuthUiForConnectivity(ok);
+    if (ok) {
+      const user = await fetchMe();
+      if (user && !user.offline) enterSession(user);
+    }
+  });
+  els.btnOffline.insertAdjacentElement("beforebegin", retry);
 }
 
 function enterSession(user) {
