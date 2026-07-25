@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Редактор уровней — Geometry Jump</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="editor.css" />
+</head>
+<body>
+  <div id="editor-app">
+    <header class="ed-top">
+      <a class="btn ed-back" href="index.html">← Игра</a>
+      <input id="level-name" class="ed-name" type="text" maxlength="48" value="Новый уровень" spellcheck="false" />
+      <div class="ed-top-actions">
+        <button id="btn-undo" class="btn small" title="Ctrl+Z">↩</button>
+        <button id="btn-redo" class="btn small" title="Ctrl+Y">↪</button>
+        <button id="btn-playtest" class="btn primary small">▶ Тест</button>
+        <button id="btn-save" class="btn small">Сохранить и опубликовать</button>
+        <button id="btn-export" class="btn small">Экспорт</button>
+        <label class="btn small ed-file-btn">Импорт
+          <input id="btn-import" type="file" accept="application/json,.json" hidden />
+        </label>
+      </div>
+    </header>
+
+    <aside class="ed-tools">
+      <p class="ed-section">Инструменты</p>
+      <button class="tool active" data-tool="block" title="1">⬛ Блок</button>
+      <button class="tool" data-tool="spike" title="2">▲ Шип</button>
+      <button class="tool" data-tool="spikeDown" title="3">▼ Шип ↓</button>
+      <button class="tool" data-tool="saw" title="4">◎ Пила</button>
+      <button class="tool" data-tool="pad" title="5">▮ Пад</button>
+      <button class="tool" data-tool="erase" title="E">⌫ Ластик</button>
+      <button class="tool" data-tool="pan" title="Space">✋ Обзор</button>
+
+      <p class="ed-section">Кисть блока</p>
+      <label class="ed-field">Ширина
+        <input id="brush-w" type="number" min="1" max="20" value="1" />
+      </label>
+      <label class="ed-field">Высота
+        <input id="brush-h" type="number" min="1" max="12" value="1" />
+      </label>
+      <label class="ed-field">Радиус пилы
+        <input id="brush-r" type="number" min="0.4" max="1.5" step="0.05" value="0.7" />
+      </label>
+
+      <p class="ed-section">Сетка</p>
+      <label class="ed-check"><input id="snap-grid" type="checkbox" checked /> Привязка</label>
+      <button id="btn-clear" class="btn small danger">Очистить всё</button>
+    </aside>
+
+    <main class="ed-stage">
+      <canvas id="editor-canvas"></canvas>
+      <div id="ed-coords">x:0 y:0</div>
+    </main>
+
+    <aside class="ed-side">
+      <p class="ed-section">Параметры</p>
+      <label class="ed-field">Длина финиша
+        <input id="level-length" type="number" min="20" max="500" value="80" />
+      </label>
+      <label class="ed-field">Скорость
+        <input id="level-speed" type="number" min="8" max="16" step="0.1" value="10.4" />
+      </label>
+      <label class="ed-field">Небо (верх)
+        <input id="theme-sky0" type="color" value="#87ceeb" />
+      </label>
+      <label class="ed-field">Небо (низ)
+        <input id="theme-sky1" type="color" value="#b8e0a8" />
+      </label>
+      <label class="ed-field">Земля
+        <input id="theme-ground" type="color" value="#5a3a22" />
+      </label>
+      <label class="ed-field">Акцент
+        <input id="theme-accent" type="color" value="#5dbf3a" />
+      </label>
+
+      <p class="ed-section">Шаблон</p>
+      <select id="template-select" class="ed-select">
+        <option value="">— из кампании —</option>
+      </select>
+      <button id="btn-load-template" class="btn small">Загрузить шаблон</button>
+
+      <p class="ed-section">Мои уровни (общие)</p>
+      <p id="ed-account" class="ed-account">—</p>
+      <div id="saved-list" class="saved-list"></div>
+      <button id="btn-new" class="btn small">+ Новый</button>
+    </aside>
+
+    <footer class="ed-hint">
+      ЛКМ — поставить · ПКМ / Ластик — удалить · Drag блока — прямоугольник ·
+      Колёсико / стрелки — камера · Ctrl+Z/Y — отмена · Space+drag — обзор · Esc — выход из теста
+    </footer>
+  </div>
+
+  <!-- Playtest overlay -->
+  <div id="playtest" class="hidden">
+    <canvas id="play-canvas"></canvas>
+    <div id="play-hud">
+      <span id="play-attempt">Попытка 1</span>
+      <div class="progress-track"><div id="play-progress"></div></div>
+      <button id="btn-exit-play" class="btn small">Esc · Редактор</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/editor.js"></script>
+</body>
+</html>

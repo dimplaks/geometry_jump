@@ -1,0 +1,10 @@
+server/data/
+node_modules/
+.DS_Store
+www/
+android/.gradle/
+android/**/build/
+*.apk
+*.aab
+.env
+.env.*

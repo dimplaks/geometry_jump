@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Geometry Jump — PVZ Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <canvas id="game"></canvas>
+
+    <div id="hud" class="hidden">
+      <div class="hud-left">
+        <span id="level-label">Уровень 1</span>
+        <span id="attempt-label">Попытка 1</span>
+        <span id="practice-label" class="practice-label hidden">Практика · Z чекпоинт · X убрать</span>
+      </div>
+      <div class="hud-right">
+        <div class="progress-track">
+          <div id="progress-fill"></div>
+        </div>
+        <span id="progress-text">0%</span>
+        <span id="track-label" class="track-label"></span>
+      </div>
+    </div>
+
+    <div id="auth-panel" class="panel">
+      <div class="brand">
+        <h1>Geometry Jump</h1>
+        <p class="tagline">PVZ Edition</p>
+      </div>
+      <p class="hint" id="auth-hint">Создай аккаунт или войди, чтобы сохранять прогресс</p>
+      <p id="auth-status" class="auth-status">Проверка сервера…</p>
+      <div class="auth-tabs" id="auth-tabs">
+        <button type="button" class="auth-tab active" data-mode="login">Вход</button>
+        <button type="button" class="auth-tab" data-mode="register">Регистрация</button>
+      </div>
+      <form id="auth-form" class="auth-form" autocomplete="on">
+        <label class="auth-field">Логин
+          <input id="auth-username" name="username" type="text" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" required placeholder="player1" />
+        </label>
+        <label class="auth-field">Пароль
+          <input id="auth-password" name="password" type="password" minlength="4" maxlength="64" required placeholder="••••" />
+        </label>
+        <p id="auth-error" class="auth-error hidden"></p>
+        <button id="auth-submit" class="btn primary" type="submit">Войти</button>
+      </form>
+      <button id="btn-offline" class="btn" type="button">Играть офлайн</button>
+    </div>
+
+    <div id="menu" class="panel hidden">
+      <div class="brand">
+        <h1>Geometry Jump</h1>
+        <p class="tagline">PVZ Edition</p>
+      </div>
+      <p class="account-line">Игрок: <span id="account-name">—</span>
+        <button id="btn-logout" class="link-btn" type="button">Выйти</button>
+      </p>
+      <p class="hint">Прыгай по клику / Space / ↑ · не врежься в шипы</p>
+      <div class="menu-actions">
+        <button id="btn-play" class="btn primary">Играть</button>
+        <button id="btn-levels" class="btn">Уровни</button>
+        <button id="btn-skins" class="btn">Скины</button>
+        <a id="btn-editor" class="btn" href="editor.html">Редактор</a>
+      </div>
+      <p class="skin-preview-label">Текущий скин: <span id="current-skin-name">Горохострел</span></p>
+      <button id="btn-mute" class="btn small-mute" type="button" aria-label="Музыка">♪ Музыка вкл</button>
+    </div>
+
+    <div id="levels-panel" class="panel hidden">
+      <h2>Кампания</h2>
+      <div id="level-grid" class="level-grid"></div>
+      <h2 class="custom-levels-title" id="custom-levels-title">Мои уровни</h2>
+      <div id="custom-level-grid" class="level-grid"></div>
+      <h2 class="custom-levels-title" id="community-levels-title">Уровни игроков</h2>
+      <p class="hint community-hint" id="community-hint">Общие уровни — лайки, комментарии и рейтинг</p>
+      <div id="community-level-grid" class="level-grid"></div>
+      <div class="menu-actions">
+        <a class="btn" href="editor.html">Открыть редактор</a>
+        <button id="btn-levels-back" class="btn">Назад</button>
+      </div>
+    </div>
+
+    <div id="level-hub" class="panel hidden">
+      <h2 id="hub-title">Уровень</h2>
+      <p id="hub-meta" class="hint"></p>
+      <div class="hub-actions">
+        <button id="btn-hub-like" class="btn small-mute" type="button">♡ 0</button>
+        <button id="btn-hub-play" class="btn primary" type="button">Играть</button>
+        <button id="btn-hub-practice" class="btn" type="button">Практика</button>
+        <button id="btn-hub-back" class="btn" type="button">Назад</button>
+      </div>
+      <div class="hub-columns">
+        <section class="hub-block">
+          <h3>Рейтинг игроков</h3>
+          <ol id="hub-leaderboard" class="hub-list"></ol>
+        </section>
+        <section class="hub-block">
+          <h3>Комментарии</h3>
+          <div id="hub-comments" class="hub-comments"></div>
+          <form id="hub-comment-form" class="hub-comment-form">
+            <input id="hub-comment-input" type="text" maxlength="280" placeholder="Написать комментарий…" required />
+            <button class="btn small-mute" type="submit">Отправить</button>
+          </form>
+        </section>
+      </div>
+    </div>
+
+    <div id="skins-panel" class="panel hidden">
+      <h2>Скины Plants vs Zombies</h2>
+      <p class="hint">Открываются за уровни · у каждого растения свой силуэт</p>
+      <div id="skin-grid" class="skin-grid"></div>
+      <div class="color-picker-wrap">
+        <p class="color-picker-label">Цвет скина</p>
+        <div id="color-grid" class="color-grid"></div>
+      </div>
+      <button id="btn-skins-back" class="btn">Назад</button>
+    </div>
+
+    <div id="pause-panel" class="panel overlay hidden">
+      <h2>Пауза</h2>
+      <p id="pause-practice-hint" class="hint hidden">Практика: Z — точка сохранения · X — удалить последнюю</p>
+      <div class="menu-actions">
+        <button id="btn-resume" class="btn primary">Продолжить</button>
+        <button id="btn-checkpoint" class="btn hidden">Чекпоинт (Z)</button>
+        <button id="btn-restart" class="btn">Заново</button>
+        <button id="btn-to-menu" class="btn">В меню</button>
+      </div>
+    </div>
+
+    <div id="complete-panel" class="panel overlay hidden">
+      <h2>Уровень пройден!</h2>
+      <p id="complete-stats"></p>
+      <p id="skin-unlock-toast" class="skin-unlock-toast hidden"></p>
+      <div class="menu-actions">
+        <button id="btn-next" class="btn primary">Дальше</button>
+        <button id="btn-complete-restart" class="btn">Ещё раз</button>
+        <button id="btn-complete-menu" class="btn">В меню</button>
+      </div>
+    </div>
+
+    <button id="btn-pause" class="icon-btn hidden" aria-label="Пауза">❚❚</button>
+    <button id="btn-mute-hud" class="icon-btn mute-hud hidden" aria-label="Музыка">♪</button>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "appId": "com.geometryjump.pvz",
+  "appName": "Geometry Jump PVZ",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

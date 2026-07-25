@@ -1,0 +1,23 @@
+{
+  "name": "geometry-jump-pvz",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Geometry Dash–style game with Plants vs Zombies skins",
+  "scripts": {
+    "start": "node server/index.js",
+    "serve": "node server/index.js",
+    "build:www": "node scripts/build-www.js",
+    "cap:sync": "npm run build:www && npx cap sync android",
+    "apk": "npm run cap:sync && cd android && ./gradlew assembleDebug",
+    "apk:debug": "npm run apk",
+    "cap:add": "npm run build:www && npx cap add android"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.14.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^6.2.1",
+    "@capacitor/cli": "^6.2.1",
+    "@capacitor/core": "^6.2.1"
+  }
+}
